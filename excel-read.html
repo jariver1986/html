@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lectura de Archivo de Excel</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<input type="file" id="archivoInput" />
+<button onclick="leerArchivoExcel()">Leer Archivo Excel</button>
+
+<pre id="contenidoArchivo"></pre>
+
+<script>
+    function leerArchivoExcel() {
+        var input, file;
+
+        input = document.getElementById('archivoInput');
+        file = input.files[0];
+
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var data = e.target.result;
+            var workbook = XLSX.read(data, { type: 'binary' });
+            var sheetName = workbook.SheetNames[0];
+            var sheet = workbook.Sheets[sheetName];
+            var contenido = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            // Muestra el contenido del archivo en la etiqueta <pre>
+            document.getElementById('contenidoArchivo').textContent = JSON.stringify(contenido, null, 2);
+        };
+
+        reader.readAsBinaryString(file);
+    }
+</script>
+
+</body>
+</html>
