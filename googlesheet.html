@@ -1,0 +1,52 @@
+// Please wait for a while.....
+// I have do not finish it....xd
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets API Example</title>
+</head>
+<body>
+
+<h1>Google Sheets Data</h1>
+
+<!-- Cargar la API de Google de forma asíncrona -->
+<script async defer src="https://apis.google.com/js/api.js" 
+        onload="initGAPI()"></script>
+
+<script>
+    // Definir la función initGAPI en el ámbito global
+    function initGAPI() {
+        // Cargar la API de Google Sheets
+        gapi.load('client', function() {
+            gapi.client.init({
+                apiKey: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+                discoveryDocs: ["https://sheets.googleapis.com/$discovery/rest?version=v4"],
+            }).then(function() {
+                // Llamar a la función para cargar datos
+                loadSheetData();
+            }).catch(function(error) {
+                console.error('Error al inicializar la API:', error);
+            });
+        });
+    }
+
+    // Cargar datos desde Google Sheets
+    function loadSheetData() {
+        gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: 'xxxxxxxxxxxxxxxxxxxxxxxxx',
+            range: 'Hoja 1!A1:C1',// write sheet name
+        }).then(function(response) {
+            var values = response.result.values;
+            
+            // Procesar los datos (puedes mostrarlos en la página)
+            console.log(values);
+        }).catch(function(error) {
+            console.error('Error al cargar datos desde Google Sheets:', error);
+        });
+    }
+</script>
+
+</body>
+</html>
