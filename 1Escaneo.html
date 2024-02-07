@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos</title>
+    <style>
+        body {
+            font-size: 18px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            font-size: 18px;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        span {
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        button {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="tituloRegistro">Registro de Datos</h1>
+
+<div>
+    <label for="dato1">ORDEN DE PRODUCCION:</label>
+    <input type="text" id="dato1" onkeydown="capturarEnter(event, 'dato2')">
+    <span id="contadorDato1">0</span>
+</div>
+
+<div>
+    <label for="dato2">COMPONENTE 1:</label>
+    <input type="text" id="dato2" onkeydown="capturarEnter(event, 'guardarDatos')" autofocus>
+    <span id="contadorDato2">0</span>
+</div>
+
+<!-- Agregado el span para mostrar la hora actual -->
+<div>
+    <label>Hora Actual:</label>
+    <span id="horaActual"></span>
+</div>
+
+<!-- Reemplazar el botón "Guardar Datos" por un ENTER en el campo dato2 -->
+<button onclick="descargarDatos()">Descargar Datos</button>
+<button onclick="eliminarDatos()">Eliminar Datos</button>
+
+<script>
+    // Contadores de datos
+    var contadorDato1 = 0;
+    var contadorDato2 = 0;
+
+    function capturarEnter(event, nextFieldId) {
+        if (event.key === "Enter") {
+            if (nextFieldId === 'guardarDatos') {
+                guardarDatos();
+            } else {
+                document.getElementById(nextFieldId).focus();
+            }
+        }
+    }
+
+    function actualizarContador(elementId) {
+        switch (elementId) {
+            case 'dato1':
+                contadorDato1++;
+                document.getElementById('contadorDato1').innerText = contadorDato1;
+                break;
+            case 'dato2':
+                contadorDato2++;
+                document.getElementById('contadorDato2').innerText = contadorDato2;
+                break;
+            default:
+                break;
+        }
+    }
+
+    function restarHoras(fecha, horas) {
+        fecha.setHours(fecha.getHours() - horas);
+        return fecha;
+    }
+
+    function guardarDatos() {
+        var dato1 = document.getElementById('dato1').value;
+        var dato2 = document.getElementById('dato2').value;
+
+        if (dato1 && dato2) {
+            actualizarContador('dato1');
+            actualizarContador('dato2');
+
+            var currentDate = new Date();
+            var formattedDate = (restarHoras(currentDate, 5)).toISOString().slice(0, 19);
+
+            document.getElementById('horaActual').innerText = formattedDate;
+
+            var fileName = "datos.txt";
+
+            var contentToSave = formattedDate + ":Orden:" + dato1 + ":Comp1:" + dato2 + "\n";
+
+            var datosAnteriores = localStorage.getItem(fileName) || "";
+            var nuevoContenido = datosAnteriores + contentToSave;
+
+            localStorage.setItem(fileName, nuevoContenido);
+
+            //document.getElementById('dato1').value = "";
+            document.getElementById('dato2').value = "";
+
+            document.getElementById('dato2').focus();
+
+            cambiarColorTitulo('green');
+        } else {
+            alert("Por favor, ingrese al menos un dato antes de guardar.");
+        }
+    }
+
+    function descargarDatos() {
+        var fileName = "datos.txt";
+        var datosGuardados = localStorage.getItem(fileName) || "";
+
+        if (datosGuardados) {
+            var blob = new Blob([datosGuardados], { type: 'text/plain' });
+            var a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = fileName;
+            a.click();
+        } else {
+            alert("No hay datos guardados para descargar.");
+        }
+    }
+
+    function eliminarDatos() {
+        var usuario = prompt("Ingrese el usuario:");
+        var clave = prompt("Ingrese la clave:");
+
+        if (usuario === "socelec" && clave === "socelec") {
+            var confirmacion = confirm("¿Está seguro de eliminar todos los datos?");
+
+            if (confirmacion) {
+                var fileName = "datos.txt";
+
+                localStorage.removeItem(fileName);
+
+                contadorDato1 = 0;
+                contadorDato2 = 0;
+
+                document.getElementById('contadorDato1').innerText = contadorDato1;
+                document.getElementById('contadorDato2').innerText = contadorDato2;
+
+                document.getElementById('horaActual').innerText = "";
+
+                alert("Datos eliminados correctamente.");
+            }
+        } else {
+            alert("Usuario o clave incorrectos. No se pueden eliminar datos.");
+        }
+    }
+
+    function cambiarColorTitulo(color) {
+        var tituloRegistro = document.getElementById('tituloRegistro');
+        tituloRegistro.style.color = color;
+
+        setTimeout(function () {
+            tituloRegistro.style.color = '';
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

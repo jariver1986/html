@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos</title>
+    <style>
+        body {
+            font-size: 18px; /* Tamaño de letra para todo el cuerpo del documento */
+        }
+
+        h1 {
+            font-size: 24px; /* Tamaño de letra para el encabezado h1 */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            font-size: 18px; /* Tamaño de letra para los campos de entrada */
+            padding: 5px; /* Añade espacio alrededor del texto dentro del campo de entrada */
+            margin-bottom: 10px; /* Añade espacio debajo de cada campo de entrada */
+        }
+
+        span {
+            font-size: 18px; /* Tamaño de letra para los contadores */
+            margin-left: 10px; /* Añade espacio a la izquierda de los contadores */
+        }
+
+        button {
+            font-size: 18px; /* Tamaño de letra para los botones */
+            margin-right: 10px; /* Añade espacio a la derecha de los botones */
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="tituloRegistro">Registro de Datos</h1>
+
+<div>
+    <label for="dato1">ORDEN DE PRODUCCION:</label>
+    <input type="text" id="dato1" onkeydown="capturarEnter(event, 'dato2')">
+    <span id="contadorDato1">0</span>
+</div>
+
+<div>
+    <label for="dato2">COMPONENTE 1:</label>
+    <input type="text" id="dato2" onkeydown="capturarEnter(event, 'dato3')" autofocus>
+    <span id="contadorDato2">0</span>
+</div>
+
+<div>
+    <label for="dato3">COMPONENTE 2:</label>
+    <input type="text" id="dato3" onkeydown="capturarEnter(event, 'dato4')">
+    <span id="contadorDato3">0</span>
+</div>
+
+<div>
+    <label for="dato4">COMPONENTE 3:</label>
+    <input type="text" id="dato4" onkeydown="capturarEnter(event, 'guardarDatos')">
+    <span id="contadorDato4">0</span>
+</div>
+
+<!-- Agregado el span para mostrar la hora actual -->
+<div>
+    <label>Hora Actual:</label>
+    <span id="horaActual"></span>
+</div>
+
+<!-- Reemplazar el botón "Guardar Datos" por un ENTER en el campo dato4 -->
+<button onclick="descargarDatos()">Descargar Datos</button>
+<button onclick="eliminarDatos()">Eliminar Datos</button>
+
+<script>
+    // Contadores de datos
+    var contadorDato1 = 0;
+    var contadorDato2 = 0;
+    var contadorDato3 = 0;
+    var contadorDato4 = 0;
+
+    function capturarEnter(event, nextFieldId) {
+        if (event.key === "Enter") {
+            if (nextFieldId === 'guardarDatos') {
+                guardarDatos();
+            } else {
+                document.getElementById(nextFieldId).focus();
+            }
+        }
+    }
+
+    function actualizarContador(elementId) {
+        switch (elementId) {
+            case 'dato1':
+                contadorDato1++;
+                document.getElementById('contadorDato1').innerText = contadorDato1;
+                break;
+            case 'dato2':
+                contadorDato2++;
+                document.getElementById('contadorDato2').innerText = contadorDato2;
+                break;
+            case 'dato3':
+                contadorDato3++;
+                document.getElementById('contadorDato3').innerText = contadorDato3;
+                break;
+            case 'dato4':
+                contadorDato4++;
+                document.getElementById('contadorDato4').innerText = contadorDato4;
+                break;
+            default:
+                break;
+        }
+    }
+
+    function restarHoras(fecha, horas) {
+        fecha.setHours(fecha.getHours() - horas);
+        return fecha;
+    }
+
+    function guardarDatos() {
+        var dato1 = document.getElementById('dato1').value;
+        var dato2 = document.getElementById('dato2').value;
+        var dato3 = document.getElementById('dato3').value;
+        var dato4 = document.getElementById('dato4').value;
+
+        if (dato1 && dato2 && dato3 && dato4) {
+            actualizarContador('dato1');
+            actualizarContador('dato2');
+            actualizarContador('dato3');
+            actualizarContador('dato4');
+
+            var currentDate = new Date();
+            var formattedDate = (restarHoras(currentDate, 5)).toISOString().slice(0, 19);
+            
+            // Mostrar la hora actual en el span correspondiente
+            document.getElementById('horaActual').innerText = formattedDate;
+
+            var fileName = "datos.txt";
+
+            // Modificado para escribir datos horizontalmente y separados por ";"
+            var contentToSave = formattedDate + ":Orden:" + dato1 + ":Comp1:" + dato2 + ":Comp2:" + dato3 + ":Comp3:" + dato4 + "\n";
+
+            // Obtener datos anteriores y agregar nuevos datos
+            var datosAnteriores = localStorage.getItem(fileName) || "";
+            var nuevoContenido = datosAnteriores + contentToSave;
+
+            // Guardar en el almacenamiento local
+            localStorage.setItem(fileName, nuevoContenido);
+
+            // Limpiar los campos
+            //document.getElementById('dato1').value = "";
+            document.getElementById('dato2').value = "";
+            document.getElementById('dato3').value = "";
+            document.getElementById('dato4').value = "";
+
+            // Enfocar en el campo dato2 nuevamente
+            document.getElementById('dato2').focus();
+
+            // Cambiar el color del título a verde por 1 segundo
+            cambiarColorTitulo('green');
+        } else {
+            alert("Por favor, ingrese al menos un dato antes de guardar.");
+        }
+    }
+
+    function descargarDatos() {
+        var fileName = "datos.txt";
+        var datosGuardados = localStorage.getItem(fileName) || "";
+
+        if (datosGuardados) {
+            var blob = new Blob([datosGuardados], { type: 'text/plain' });
+            var a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = fileName;
+            a.click();
+        } else {
+            alert("No hay datos guardados para descargar.");
+        }
+    }
+
+    function eliminarDatos() {
+        var usuario = prompt("Ingrese el usuario:");
+        var clave = prompt("Ingrese la clave:");
+
+        // Verificar si el usuario y la clave son correctos
+        if (usuario === "socelec" && clave === "socelec") {
+            var confirmacion = confirm("¿Está seguro de eliminar todos los datos?");
+
+            if (confirmacion) {
+                var fileName = "datos.txt";
+
+                // Limpiar el almacenamiento local
+                localStorage.removeItem(fileName);
+
+                // Restablecer los contadores
+                contadorDato1 = 0;
+                contadorDato2 = 0;
+                contadorDato3 = 0;
+                contadorDato4 = 0;
+
+                // Actualizar los contadores en la interfaz
+                document.getElementById('contadorDato1').innerText = contadorDato1;
+                document.getElementById('contadorDato2').innerText = contadorDato2;
+                document.getElementById('contadorDato3').innerText = contadorDato3;
+                document.getElementById('contadorDato4').innerText = contadorDato4;
+
+                // Limpiar la hora actual
+                document.getElementById('horaActual').innerText = "";
+
+                alert("Datos eliminados correctamente.");
+            }
+        } else {
+            alert("Usuario o clave incorrectos. No se pueden eliminar datos.");
+        }
+    }
+
+    function cambiarColorTitulo(color) {
+        var tituloRegistro = document.getElementById('tituloRegistro');
+        tituloRegistro.style.color = color;
+
+        setTimeout(function () {
+            tituloRegistro.style.color = '';  // Restaurar el color original
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>
