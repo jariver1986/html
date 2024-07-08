@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico desde Excel</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+</head>
+<body>
+    <input type="file" id="inputExcel" />
+    <button id="generateChart" disabled>Generar Gráfica</button>
+    <br>
+    <label for="chartType">Tipo de gráfico:</label>
+    <select id="chartType" disabled>
+        <option value="line">Líneas</option>
+        <option value="bar">Barras</option>
+    </select>
+    <br>
+    <label for="yearFilter">Año:</label>
+    <select id="yearFilter" disabled>
+        <option value="">Todos</option>
+    </select>
+    <label for="monthFilter">Mes:</label>
+    <select id="monthFilter" disabled>
+        <option value="">Todos</option>
+        <option value="1">Enero</option>
+        <option value="2">Febrero</option>
+        <option value="3">Marzo</option>
+        <option value="4">Abril</option>
+        <option value="5">Mayo</option>
+        <option value="6">Junio</option>
+        <option value="7">Julio</option>
+        <option value="8">Agosto</option>
+        <option value="9">Septiembre</option>
+        <option value="10">Octubre</option>
+        <option value="11">Noviembre</option>
+        <option value="12">Diciembre</option>
+    </select>
+    <label for="areaFilter">Área:</label>
+    <select id="areaFilter" disabled>
+        <option value="">Todas</option>
+    </select>
+    <button id="updateChart" disabled>Actualizar Gráfica</button>
+    <br>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
