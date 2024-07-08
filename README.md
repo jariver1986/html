@@ -12,3 +12,7 @@ Web browsers interpret HTML documents and render them as visually appealing and 
 # Data management
 ![image](https://github.com/jariver1986/html/assets/62295761/6db96d4f-6735-44c4-936d-8297ca529c20)
 
+# Charts
+![graficos gestion de defectos](https://github.com/jariver1986/html/assets/62295761/29e0f597-9ffd-4c6b-b7a3-e6e261e72d0a)
+
+
