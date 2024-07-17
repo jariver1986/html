@@ -15,4 +15,6 @@ Web browsers interpret HTML documents and render them as visually appealing and 
 # Charts
 ![graficos gestion de defectos](https://github.com/jariver1986/html/assets/62295761/29e0f597-9ffd-4c6b-b7a3-e6e261e72d0a)
 
+# MQTT Ubidots relay ON OFF
+![image](https://github.com/user-attachments/assets/d7621ec6-6264-42fc-a717-6a0d530fd7c8)
 
