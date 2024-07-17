@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar datos a Ubidots</title>
+</head>
+<body>
+    <!-- Campo de entrada y botón para enviar el valor de relay -->
+    <input type="number" id="relayValueInput" placeholder="Ingrese el valor de relay">
+    <button onclick="enviarDato()">Enviar a Ubidots</button>
+
+    <script>
+        function enviarDato() {
+            // Obtener el valor de relay desde el campo de entrada
+            var relayValue = document.getElementById("relayValueInput").value;
+
+            // Validar si el campo está vacío
+            if (relayValue === "") {
+                alert("Por favor ingrese un valor para relay.");
+                return;
+            }
+
+            // Token y endpoint de Ubidots
+            var token = "escribir aqui token";
+            var deviceName = "datos2";
+            var url = "https://industrial.api.ubidots.com/api/v1.6/devices/" + deviceName;
+
+            // Crear objeto de datos
+            var data = {
+                "relay": relayValue
+            };
+
+            // Convertir objeto a JSON
+            var jsonData = JSON.stringify(data);
+
+            // Hacer la solicitud POST a Ubidots
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("X-Auth-Token", token);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 201) {
+                        console.log("Datos enviados exitosamente a Ubidots");
+                    } else {
+                        console.error("Error al enviar datos a Ubidots:", xhr.status);
+                    }
+                }
+            };
+            xhr.send(jsonData);
+        }
+    </script>
+</body>
+</html>
